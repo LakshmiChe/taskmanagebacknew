@@ -73,27 +73,31 @@ const updateTask = async (req, res) => {
 
 // Delete a task
 const deleteTask = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const task = await Task.findById(id);
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
 
-        if (!task) {
-            return res.status(404).json({ message: 'Task not found' });
-        }
+  try {
+    const task = await Task.findById(id);
 
-        if (task.createdBy.toString() !== req.user.id) {
-            return res.status(403).json({ message: 'Not authorized to delete this task' });
-        }
-
-        await task.remove();
-
-        res.status(200).json({ message: 'Task deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
     }
-};
 
+    if (!task.createdBy || task.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to delete this task' });
+    }
+
+    await Task.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'Task deleted successfully' });
+  } catch (error) {
+    console.error("Delete Task Error:", error);
+    res.status(500).json({ message: 'Server error deleting task' });
+  }
+};
 // Add a comment to a task
 const addComment = async (req, res) => {
     const { id } = req.params;
