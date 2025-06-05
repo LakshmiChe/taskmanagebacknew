@@ -1,5 +1,6 @@
 const Task = require('../models/Task');
 const sendMail = require('../config/mailer');
+const { sendEmail } = require("../services/emailService");
 
 // Create a new task
 const createTask = async (req, res) => {
@@ -70,7 +71,20 @@ const updateTask = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const notifyTaskUpdate = async (task, userEmail) => {
+  const subject = `Task Update: ${task.title}`;
+  const text = `
+    Hello,
 
+    The task "${task.title}" has been updated.
+    Current Status: ${task.status}
+    Deadline: ${task.deadline}
+
+    Best regards,
+    Task Management App
+  `;
+  await sendEmail(userEmail, subject, text);
+};
 // Delete a task
 const deleteTask = async (req, res) => {
     const { id } = req.params;
@@ -201,4 +215,5 @@ module.exports = {
     attachFile,
     getTaskReport,
     notifyDeadlines,
+    notifyTaskUpdate
 };
