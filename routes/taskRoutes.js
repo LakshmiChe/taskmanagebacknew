@@ -47,8 +47,10 @@ router.post('/:id/attachments', authMiddleware, attachFile);
 router.post('/:id/getTaskReport', authMiddleware, getTaskReport);
 router.post('/:id/notifyDeadlines', authMiddleware, notifyDeadlines);
 
-router.get('/reports/task-completion', reportController.getTaskCompletionReport);
-router.get('/reports/upcoming-deadlines', reportController.getUpcomingDeadlines);
-router.get('/reports/progress', reportController.getProgressReport);
+
+
+router.get('/reports/task-completion', authMiddleware, reportController.getTaskCompletionReport);
+router.get('/reports/upcoming-deadlines', authMiddleware, reportController.getUpcomingDeadlines);
+router.get('/reports/progress', authMiddleware, reportController.getProgressReport);
 
 module.exports = router;
