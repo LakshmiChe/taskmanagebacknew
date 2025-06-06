@@ -1,17 +1,21 @@
 const Task = require('../models/Task');
 
+
 // Task Completion Report
 exports.getTaskCompletionReport = async (req, res) => {
   try {
-    const completed = await Task.countDocuments({ status: 'completed' });
-    const inProgress = await Task.countDocuments({ status: 'in-progress' });
-    const pending = await Task.countDocuments({ status: 'pending' });
+    const userId = req.user.id; // Assuming you have set req.user during authentication
+    
+    const completed = await Task.countDocuments({ status: 'completed', userId });
+    const inProgress = await Task.countDocuments({ status: 'in-progress', userId });
+    const pending = await Task.countDocuments({ status: 'pending', userId });
 
     res.json({ tasks: { completed, inProgress, pending } });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching report', error: err });
   }
 };
+
 
 // Upcoming Deadlines
 exports.getUpcomingDeadlines = async (req, res) => {
