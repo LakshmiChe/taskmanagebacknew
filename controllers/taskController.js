@@ -96,20 +96,20 @@ const updateTask = async (req, res) => {
     }
 };
 
-const notifyTaskUpdate = async (task, userEmail) => {
-  const subject = `Task Update: ${task.title}`;
-  const text = `
-    Hello,
+// const notifyTaskUpdate = async (task, userEmail) => {
+//   const subject = `Task Update: ${task.title}`;
+//   const text = `
+//     Hello,
 
-    The task "${task.title}" has been updated.
-    Current Status: ${task.status}
-    Deadline: ${task.deadline}
+//     The task "${task.title}" has been updated.
+//     Current Status: ${task.status}
+//     Deadline: ${task.deadline}
 
-    Best regards,
-    Task Management App
-  `;
-  await sendEmail(userEmail, subject, text);
-};
+//     Best regards,
+//     Task Management App
+//   `;
+//   await sendEmail(userEmail, subject, text);
+// };
 // Delete a task
 const deleteTask = async (req, res) => {
   const { id } = req.params;
@@ -243,6 +243,5 @@ module.exports = {
     addComment,
     attachFile,
     getTaskReport,
-    notifyDeadlines,
-    notifyTaskUpdate
+    notifyDeadlines
 };
