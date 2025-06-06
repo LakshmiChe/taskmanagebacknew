@@ -47,7 +47,7 @@ const updateTask = async (req, res) => {
     const { title, description, deadline, priority, status, assignedTo } = req.body;
 
     try {
-        const task = await Task.findById(id);
+        const task = await Task.findById(id).populate('assignedTo', 'email'); // Fetch assigned user's email
 
         if (!task) {
             return res.status(404).json({ message: 'Task not found' });
@@ -57,6 +57,7 @@ const updateTask = async (req, res) => {
             return res.status(403).json({ message: 'Not authorized to update this task' });
         }
 
+        // Update task fields
         task.title = title || task.title;
         task.description = description || task.description;
         task.deadline = deadline || task.deadline;
@@ -66,11 +67,35 @@ const updateTask = async (req, res) => {
 
         const updatedTask = await task.save();
 
+        // Notify assigned user about the update if the task has an assigned user
+        if (task.assignedTo?.email) {
+            const subject = `Task Update: ${updatedTask.title}`;
+            const message = `
+                Hello,
+
+                The task "${updatedTask.title}" has been updated with the following details:
+
+                - Description: ${updatedTask.description}
+                - Deadline: ${updatedTask.deadline}
+                - Priority: ${updatedTask.priority}
+                - Status: ${updatedTask.status}
+
+                Please review the changes.
+
+                Best regards,
+                Task Management App
+            `;
+
+            await sendEmail(task.assignedTo.email, subject, message);
+        }
+
         res.status(200).json(updatedTask);
     } catch (error) {
+        console.error("Error updating task:", error);
         res.status(500).json({ message: error.message });
     }
 };
+
 const notifyTaskUpdate = async (task, userEmail) => {
   const subject = `Task Update: ${task.title}`;
   const text = `
