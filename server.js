@@ -20,7 +20,7 @@ app.use(
 );
 
 // Handle preflight requests
-app.options('*', cors());
+//app.options('*', cors());
 
 // Debug CORS headers (Optional - for testing only)
 app.use((req, res, next) => {
