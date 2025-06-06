@@ -9,30 +9,31 @@ connectDB();
 const app = express();
 app.use(express.json());
 
-// CORS Configuration
-const allowedOrigins = ['https://kaleidoscopic-liger-192bde.netlify.app']; // Add your frontend origin(s) here
-
+// Enable CORS with specific configuration
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests from allowed origins or no origin (e.g., Postman)
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+    origin: 'https://kaleidoscopic-liger-192bde.netlify.app', // Your frontend's domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Include credentials if needed
   })
 );
+
+// Handle preflight requests
+app.options('*', cors());
+
+// Debug CORS headers (Optional - for testing only)
+app.use((req, res, next) => {
+  console.log(`Request Origin: ${req.headers.origin}`);
+  res.setHeader('Access-Control-Allow-Origin', 'https://kaleidoscopic-liger-192bde.netlify.app');
+  next();
+});
 
 // Routes
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 
-// Start Server
+// Start the server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
