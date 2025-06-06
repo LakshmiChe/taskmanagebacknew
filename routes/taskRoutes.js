@@ -20,7 +20,7 @@ router.route('/')
     .post(authMiddleware, createTask);
 
 router.route('/:id')
-    // .put(authMiddleware, updateTask)
+    .put(authMiddleware, updateTask)
     .delete(authMiddleware, deleteTask);
 
 
