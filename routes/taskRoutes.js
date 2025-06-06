@@ -25,22 +25,21 @@ router.route('/:id')
 
 
 // Update Task Route
-router.put("/:taskId", authMiddleware, async (req, res) => {
-  try {
-    const updatedTask = await updateTask(req.params.taskId, req.body);
+// Add this route in your routes.js file
+router.post('/:id/notify', authMiddleware, async (req, res) => {
+    try {
+        const { email, taskTitle, message } = req.body;
 
-    // Fetch the user's email (assuming you store user info in the request via authMiddleware)
-    const userEmail = req.user.email;
+        // Call the notifyTaskUpdate service with required parameters
+        await notifyTaskUpdate({ email, taskTitle, message });
 
-    // Notify the user about the task update
-    await notifyTaskUpdate(updatedTask, userEmail);
-
-    res.status(200).json({ message: "Task updated successfully", task: updatedTask });
-  } catch (error) {
-    console.error("Error updating task:", error);
-    res.status(500).json({ message: "Failed to update task" });
-  }
+        res.status(200).json({ message: "Notification sent successfully" });
+    } catch (error) {
+        console.error("Error sending notification:", error);
+        res.status(500).json({ message: "Failed to send notification" });
+    }
 });
+
 
 router.post('/:id/comments', authMiddleware, addComment);
 router.post('/:id/attachments', authMiddleware, attachFile);
