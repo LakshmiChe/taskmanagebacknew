@@ -11,6 +11,7 @@ const {
     getTaskReport,
     notifyDeadlines
 } = require('../controllers/taskController');
+const reportController = require('../controllers/reportController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -45,4 +46,9 @@ router.post('/:id/comments', authMiddleware, addComment);
 router.post('/:id/attachments', authMiddleware, attachFile);
 router.post('/:id/getTaskReport', authMiddleware, getTaskReport);
 router.post('/:id/notifyDeadlines', authMiddleware, notifyDeadlines);
+
+router.get('/reports/task-completion', reportController.getTaskCompletionReport);
+router.get('/reports/upcoming-deadlines', reportController.getUpcomingDeadlines);
+router.get('/reports/progress', reportController.getProgressReport);
+
 module.exports = router;
